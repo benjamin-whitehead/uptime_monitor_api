@@ -12,6 +12,7 @@ defmodule Uptime.Application do
       Uptime.Repo,
       {DNSCluster, query: Application.get_env(:uptime, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Uptime.PubSub},
+      {Uptime.Monitors.MonitorRunner, %{}},
       # Start a worker by calling: Uptime.Worker.start_link(arg)
       # {Uptime.Worker, arg},
       # Start to serve requests, typically the last entry

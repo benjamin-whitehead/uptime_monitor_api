@@ -38,7 +38,7 @@ defmodule Uptime.Monitors do
   def get_monitor!(id), do: Repo.get!(Monitor, id)
 
   @doc """
-  Creates a monitor.
+  Creates a monitor. Broadcasts the created monitor to the monitor channel.
 
   ## Examples
 
@@ -53,6 +53,14 @@ defmodule Uptime.Monitors do
     %Monitor{}
     |> Monitor.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, monitor} = result ->
+        Phoenix.PubSub.broadcast(Uptime.PubSub, "monitors", {:monitor_created, monitor})
+        result
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
