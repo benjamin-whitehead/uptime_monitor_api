@@ -8,6 +8,7 @@ defmodule Uptime.Monitors.MonitorWorker do
   @schedule_interval 60 * 1000
 
   def start_link(monitor_id) do
+    Logger.debug("TEST")
     GenServer.start_link(__MODULE__, monitor_id)
   end
 
