@@ -13,8 +13,9 @@ defmodule Uptime.Monitors.MonitorSupervisor do
     Monitors.list_monitors()
     |> Enum.each(fn monitor ->
       case start_child(monitor.id) do
-        {:ok, _pid} ->
-          Logger.info("monitor_supervisor: started worker for monitor #{monitor.id}")
+        {:ok, pid} ->
+          Logger.info("monitor_supervisor: starting worker for monitor #{monitor.id}")
+          MonitorWorker.start(pid)
 
         {:error, reason} ->
           Logger.error(

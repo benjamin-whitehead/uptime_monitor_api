@@ -62,7 +62,11 @@ defmodule Uptime.Monitors.MonitorWorker do
   def handle_info(:work, %{"monitor_url" => monitor_url, "monitor_id" => monitor_id} = state) do
     Logger.info("#{log_prefix(state)} pinging #{monitor_url}")
 
-    status = ping_url(monitor_url)
+    case status = ping_url(monitor_url) do
+      "down" ->
+        Phoenix.PubSub.broadcast(Uptime.PubSub, "monitor_status", {:monitor_down, monitor_id})
+    end
+
     Status.add_status_for_monitor(status, monitor_id)
 
     timer = schedule(@schedule_interval)
