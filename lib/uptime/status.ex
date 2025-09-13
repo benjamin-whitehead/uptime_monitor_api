@@ -13,6 +13,17 @@ defmodule Uptime.Status do
   end
 
   @doc """
+  Get's the last status for a given monitor_id.
+  """
+  def get_last_status_for_monitor(monitor_id) do
+    MonitorStatus
+    |> where([m], m.monitor_id == ^monitor_id)
+    |> order_by([h], desc: h.id)
+    |> limit(1)
+    |> Repo.one()
+  end
+
+  @doc """
   Returns the list of monitor_status.
 
   ## Examples

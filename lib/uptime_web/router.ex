@@ -8,7 +8,9 @@ defmodule UptimeWeb.Router do
   scope "/api", UptimeWeb do
     pipe_through :api
 
-    resources "/monitors", MonitorController, except: [:new, :edit]
+    resources "/monitors", MonitorController, except: [:new, :edit] do
+      get "/status", MonitorStatusController, :show
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
