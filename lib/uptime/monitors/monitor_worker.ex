@@ -65,6 +65,9 @@ defmodule Uptime.Monitors.MonitorWorker do
     case status = ping_url(monitor_url) do
       "down" ->
         Phoenix.PubSub.broadcast(Uptime.PubSub, "monitor_status", {:monitor_down, monitor_id})
+
+      "up" ->
+        nil
     end
 
     Status.add_status_for_monitor(status, monitor_id)
@@ -75,8 +78,12 @@ defmodule Uptime.Monitors.MonitorWorker do
 
   defp ping_url(monitor_url) do
     case HTTPoison.get(monitor_url) do
-      {:ok, %{status_code: 200}} -> "up"
-      _ -> "down"
+      {:ok, %{status_code: 200}} ->
+        "up"
+
+      {:error, reason} ->
+        Logger.debug("Monitor failed for reason #{inspect(reason)}")
+        "down"
     end
   end
 
