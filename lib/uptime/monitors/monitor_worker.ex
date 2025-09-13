@@ -60,7 +60,7 @@ defmodule Uptime.Monitors.MonitorWorker do
 
   @impl true
   def handle_info(:work, %{"monitor_url" => monitor_url, "monitor_id" => monitor_id} = state) do
-    Logger.info("#{log_prefix(state)} doing work")
+    Logger.info("#{log_prefix(state)} pinging #{monitor_url}")
 
     status = ping_url(monitor_url)
     Status.add_status_for_monitor(status, monitor_id)
