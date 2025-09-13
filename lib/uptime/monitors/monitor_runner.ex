@@ -2,6 +2,10 @@ defmodule Uptime.Monitors.MonitorRunner do
   use GenServer
   require Logger
 
+  alias Uptime.Monitors.MonitorWorker
+  alias Uptime.Monitors.Monitor
+  alias Uptime.Monitors.MonitorSupervisor
+
   def start_link(monitor) do
     GenServer.start_link(__MODULE__, monitor)
   end
@@ -15,8 +19,11 @@ defmodule Uptime.Monitors.MonitorRunner do
   end
 
   @impl true
-  def handle_info({:monitor_created, monitor}, state) do
-    Logger.info("monitor_runner: received monitor_created: #{monitor.id}")
+  def handle_info({:monitor_created, %Monitor{id: monitor_id}}, state) do
+    Logger.info("monitor_runner: received monitor_created: #{monitor_id}")
+
+    {:ok, pid} = MonitorSupervisor.start_child(monitor_id)
+    MonitorWorker.start(pid)
 
     {:noreply, state}
   end
